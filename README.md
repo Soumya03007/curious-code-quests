@@ -1,73 +1,76 @@
-# Welcome to your Lovable project
+# 🚀 Curious Code Quests
 
-## Project info
+_“Turning complex tech concepts into curious, kid-like stories.”_
 
-**URL**: https://lovable.dev/projects/6da6c651-c656-4192-a638-08df70957819
+Curious Code Quests is a **React + Node.js + Gemini API** powered web app that simplifies technical concepts through fun, engaging, and intuitive storytelling. Whether you're a curious beginner or a seasoned developer needing a quick refresher—this app explains APIs, algorithms, and more like never before.
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## 🧠 Features
 
-**Use Lovable**
+- 🤖 **AI-Powered Explanations** using Gemini API  
+- 📚 **Story-based Learning**: Every concept comes with a metaphorical story  
+- 🎨 **Modern UI** built with React and Tailwind CSS  
+- 🧪 **Test with Thunder Client** or other REST tools  
+- ⚡️ Fast, responsive, and minimal  
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/6da6c651-c656-4192-a638-08df70957819) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## 💠 Tech Stack
 
-**Use your preferred IDE**
+| Frontend            | Backend            | AI Integration         |
+|---------------------|--------------------|-------------------------|
+| React + TypeScript  | Node.js + Express  | Google Gemini API      |
+| Tailwind CSS        | RESTful API        | @google/generative-ai  |
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+---
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## ⚙️ Local Setup
 
-Follow these steps:
+### 1. Clone the Repo
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### 2. Install Dependencies
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+```bash
+# For frontend
+npm install
 
-# Step 3: Install the necessary dependencies.
-npm i
+# For backend
+cd backend
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### 3. Add Your Gemini API Key
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Create a .env file in the backend folder:
 
-**Use GitHub Codespaces**
+```env
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+  GEMINI_API_KEY=your_google_generative_ai_key_here
 
-## What technologies are used for this project?
+```
+### 4. Run the App
 
-This project is built with:
+``` bash
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+# Start the frontend
+npm run dev
 
-## How can I deploy this project?
+# Start the backend
+cd backend
+npm run start
 
-Simply open [Lovable](https://lovable.dev/projects/6da6c651-c656-4192-a638-08df70957819) and click on Share -> Publish.
+```
+---
+### 🤝 Contributions
 
-## Can I connect a custom domain to my Lovable project?
+Got a cool idea or new concept you'd like explained? Open a PR or issue!
+This project is open for contributions, improvements, and educational collabs.
 
-Yes, you can!
+---
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### 🧠 Inspiration
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+This project was born from the idea that everyone learns better through stories.
+Why make tech intimidating when we can make it curious, creative, and fun?
