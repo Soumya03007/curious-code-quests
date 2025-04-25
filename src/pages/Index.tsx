@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import AICharacter from '@/components/AICharacter';
@@ -6,68 +5,52 @@ import ConceptInput from '@/components/ConceptInput';
 import ExplanationResult from '@/components/ExplanationResult';
 import { useToast } from '@/components/ui/use-toast';
 
-// This would eventually come from an actual API
-const mockExplanations = (concept: string) => {
-  // Simplified mock API response
-  const examples: Record<string, { explanation: string, story: string }> = {
-    'api': {
-      explanation: "An API (Application Programming Interface) is like a menu in a restaurant. It lists what services are available for you to use, without you needing to know how the kitchen works.",
-      story: "Imagine you're at a restaurant. You don't go into the kitchen to make your own meal—instead, you look at a menu (the API) that tells you what you can order. You place your order through a waiter (make an API call), and the kitchen (the server) prepares what you asked for and sends it back. The menu is the interface between you and the restaurant's services, just like an API is the interface between your app and a service's functionality."
-    },
-    'algorithm': {
-      explanation: "An algorithm is a step-by-step procedure for solving a problem or accomplishing a task. It's like a cooking recipe that tells you exactly what to do in what order.",
-      story: "Think of Sarah, who loves to bake cookies. She follows a recipe that says: '1) Preheat oven to 350°F, 2) Mix butter and sugar, 3) Add eggs and vanilla, 4) Stir in dry ingredients...' This recipe is her algorithm—a clear set of instructions that, when followed correctly, consistently produces delicious cookies. Computer algorithms work the same way, but instead of making cookies, they might sort data, find routes, or recommend videos you might like."
-    },
-    'cloud computing': {
-      explanation: "Cloud computing means using computer services (like storage, servers, databases) over the internet instead of owning and maintaining the physical hardware yourself.",
-      story: "Remember the old days when everyone had DVD collections at home? You needed physical space to store them, had to organize them, and replace them if damaged. Then came Netflix—suddenly, all those movies lived 'in the cloud.' You didn't need physical DVDs anymore; you just accessed what you wanted, when you wanted, through the internet. That's like cloud computing: instead of buying and maintaining your own servers and storage, you rent what you need from companies that manage it all for you."
-    }
-  };
-
-  // Default response for terms not in our examples
-  const defaultResponse = {
-    explanation: `${concept} is a technology term that refers to a specific concept in computing or digital technology. It helps solve particular problems in the tech world.`,
-    story: `Let me tell you about Alex who needed to understand ${concept}. At first, it seemed complex and technical. But then Alex realized it's actually similar to something familiar - like how we organize our kitchen cabinets. When you put things in logical places and have a system, it becomes much easier to find what you need when cooking. That's essentially what ${concept} does in the tech world - creates systems that make complex things more manageable and efficient.`
-  };
-
-  return examples[concept.toLowerCase()] || defaultResponse;
-};
-
 const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [result, setResult] = useState<{ 
-    term: string; 
-    explanation: string; 
-    story: string; 
+  const [result, setResult] = useState<{
+    term: string;
+    explanation: string;
+    story: string;
   } | null>(null);
   const { toast } = useToast();
 
-  const handleSubmit = (concept: string) => {
+  const handleSubmit = async (concept: string) => {
     setIsLoading(true);
     setSearchTerm(concept);
-    
-    // Simulate API call delay
-    setTimeout(() => {
-      try {
-        const response = mockExplanations(concept);
-        
-        setResult({
-          term: concept,
-          explanation: response.explanation,
-          story: response.story
-        });
-        
-        setIsLoading(false);
-      } catch (error) {
-        setIsLoading(false);
-        toast({
-          title: "Oops! Something went wrong",
-          description: "We couldn't process your request. Please try again.",
-          variant: "destructive"
-        });
+
+    try {
+      // Make the API call to the backend
+      const response = await fetch('http://localhost:5000/api/explain', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ concept }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Backend error');
       }
-    }, 1500); // Simulate API delay
+
+      const data = await response.json();
+      
+      // Set the result with explanation and story from the backend
+      setResult({
+        term: concept,
+        explanation: data.explanation,
+        story: data.story,
+      });
+
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      toast({
+        title: 'Oops! Something went wrong',
+        description: "We couldn't process your request. Please try again.",
+        variant: 'destructive',
+      });
+    }
   };
 
   return (
