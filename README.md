@@ -25,14 +25,6 @@ Curious Code Quests is a **React + Node.js + Gemini API** powered web app that s
 
 ---
 
-## 📸 Screenshots
-
-| Concept Input        | AI Character         | Explanations         |
-|----------------------|----------------------|-----------------------|
-| ![Website](./screenshots/website.png) | ![Explanation](./screenshots/explanation.png) |
-
----
-
 ## ⚙️ Local Setup
 
 ### 1. Clone the Repo
@@ -70,11 +62,13 @@ cd backend
 npm run start
 
 ```
-
+---
 ### 🤝 Contributions
 
 Got a cool idea or new concept you'd like explained? Open a PR or issue!
 This project is open for contributions, improvements, and educational collabs.
+
+---
 
 ### 🧠 Inspiration
 
