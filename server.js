@@ -21,7 +21,7 @@ app.post("/api/explain", async (req, res) => {
   if (!concept) return res.status(400).json({ error: "Concept is required" });
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-experimental" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     const prompt = `
 You are a friendly AI tutor.
