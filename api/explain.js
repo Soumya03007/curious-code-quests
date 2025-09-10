@@ -12,7 +12,8 @@ app.use(express.json());
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-app.post("/api/explain", async (req, res) => {
+// ❌ IMPORTANT: route should be just "/" (NOT "/api/explain")
+app.post("/", async (req, res) => {
   const { concept } = req.body;
 
   if (!concept) {
@@ -32,6 +33,7 @@ app.post("/api/explain", async (req, res) => {
     const result = await model.generateContent(prompt);
     const text = result.response.text();
 
+    // Extract JSON safely
     const start = text.indexOf("{");
     const end = text.lastIndexOf("}");
     const jsonString = text.substring(start, end + 1);
@@ -49,6 +51,6 @@ app.post("/api/explain", async (req, res) => {
   }
 });
 
-//  Export as a serverless handler for Vercel
+// ✅ Export as a serverless function
 const handler = serverless(app);
 export default handler;
