@@ -1,9 +1,13 @@
-// /api/explain.js
 import express from "express";
-import serverless from "serverless-http";
+import cors from "cors";
+import dotenv from "dotenv";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import serverless from "serverless-http";
+
+dotenv.config();
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -16,35 +20,23 @@ app.post("/api/explain", async (req, res) => {
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-pro" });
 
     const prompt = `
-You are a friendly AI tutor.
-Explain the concept of "${concept}" in simple language and give a short story.
-Respond ONLY as JSON:
-{
-  "explanation": "...",
-  "story": "..."
-}
-`;
+    You are a friendly and creative AI tutor.
+    Explain the concept of "${concept}" simply.
+    Also, give a short story analogy.
+    Respond strictly as JSON with fields "explanation" and "story".
+    `;
 
     const result = await model.generateContent(prompt);
-    const text = (await result.response).text();
+    const text = result.response.text();
 
-    console.log("Raw Gemini response:", text);
+    const start = text.indexOf("{");
+    const end = text.lastIndexOf("}");
+    const jsonString = text.substring(start, end + 1);
 
-    let parsed;
-    try {
-      const start = text.indexOf("{");
-      const end = text.lastIndexOf("}");
-      if (start === -1 || end === -1) {
-        throw new Error("No JSON found in Gemini response");
-      }
-      parsed = JSON.parse(text.substring(start, end + 1));
-    } catch (err) {
-      console.error("Failed to parse Gemini response:", text, err);
-      return res.status(500).json({ error: "Invalid AI response format" });
-    }
+    const parsed = JSON.parse(jsonString);
 
     res.json({
       term: concept,
@@ -52,9 +44,11 @@ Respond ONLY as JSON:
       story: parsed.story,
     });
   } catch (error) {
-    console.error("Gemini API error:", error);
-    res.status(500).json({ error: error.message || "Gemini API failed" });
+    console.error("❌ Gemini API error:", error);
+    res.status(500).json({ error: "Failed to generate explanation" });
   }
 });
 
-export const handler = serverless(app);
+//  Export as a serverless handler for Vercel
+const handler = serverless(app);
+export default handler;
