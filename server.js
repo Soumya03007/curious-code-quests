@@ -54,7 +54,8 @@ Respond as JSON: { "explanation": "...", "story": "..." }
 // === Serve Vite build ===
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 app.use(express.static(path.join(__dirname, "dist")));
-app.get("*", (_, res) => {
+
+app.get(/.*/, (req, res) => {
   res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
