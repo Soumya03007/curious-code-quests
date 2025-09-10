@@ -1,20 +1,22 @@
+// /api/explain.js
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import serverless from "serverless-http";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 5000;
 
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Initialize Gemini with your API key
+// Initialize Gemini with API key
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// Route to generate explanation and story
+// POST /api/explain
 app.post("/api/explain", async (req, res) => {
   const { concept } = req.body;
 
@@ -23,7 +25,7 @@ app.post("/api/explain", async (req, res) => {
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model:"gemini-2.5-experimental" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-experimental" });
 
     const prompt = `
 You are a friendly and creative AI tutor.
@@ -42,7 +44,7 @@ Respond with a JSON object like:
     const response = await result.response;
     const text = response.text();
 
-    // Try to extract JSON object from AI response
+    // Extract JSON from AI response
     const start = text.indexOf("{");
     const end = text.lastIndexOf("}");
     const jsonString = text.substring(start, end + 1);
@@ -59,6 +61,5 @@ Respond with a JSON object like:
   }
 });
 
-app.listen(port, () => {
-  console.log(`✅ Gemini-powered backend running at http://localhost:${port}`);
-});
+
+export const handler = serverless(app);
