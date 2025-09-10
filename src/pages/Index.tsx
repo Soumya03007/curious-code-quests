@@ -21,7 +21,7 @@ const Index = () => {
 
     try {
       // Make the API call to the backend
-      const response = await fetch('/api/explain', {
+      const response = await fetch('http://localhost:4000/api/explain', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
