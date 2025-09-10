@@ -4,14 +4,10 @@ import serverless from "serverless-http";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const app = express();
-
-// Middleware
 app.use(express.json());
 
-// Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// POST /api/explain
 app.post("/api/explain", async (req, res) => {
   const { concept } = req.body;
 
@@ -24,7 +20,7 @@ app.post("/api/explain", async (req, res) => {
 
     const prompt = `
 You are a friendly AI tutor.
-Explain the concept of "${concept}" in simple language and give a short story or analogy.
+Explain the concept of "${concept}" in simple language and give a short story.
 Respond ONLY as JSON:
 {
   "explanation": "...",
@@ -35,16 +31,19 @@ Respond ONLY as JSON:
     const result = await model.generateContent(prompt);
     const text = (await result.response).text();
 
-    // Safe JSON parsing
+    console.log("Raw Gemini response:", text);
+
     let parsed;
     try {
       const start = text.indexOf("{");
       const end = text.lastIndexOf("}");
-      if (start === -1 || end === -1) throw new Error("Invalid JSON from AI");
+      if (start === -1 || end === -1) {
+        throw new Error("No JSON found in Gemini response");
+      }
       parsed = JSON.parse(text.substring(start, end + 1));
     } catch (err) {
       console.error("Failed to parse Gemini response:", text, err);
-      return res.status(500).json({ error: "Invalid AI response" });
+      return res.status(500).json({ error: "Invalid AI response format" });
     }
 
     res.json({
@@ -54,9 +53,8 @@ Respond ONLY as JSON:
     });
   } catch (error) {
     console.error("Gemini API error:", error);
-    res.status(500).json({ error: "Failed to generate explanation from Gemini." });
+    res.status(500).json({ error: error.message || "Gemini API failed" });
   }
 });
 
-// Export for Vercel serverless
 export const handler = serverless(app);
