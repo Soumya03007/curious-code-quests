@@ -1,19 +1,14 @@
 // /api/explain.js
 import express from "express";
-import dotenv from "dotenv";
-import cors from "cors";
 import serverless from "serverless-http";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-
-dotenv.config();
 
 const app = express();
 
 // Middleware
-app.use(cors());
 app.use(express.json());
 
-// Initialize Gemini with API key
+// Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // POST /api/explain
@@ -28,12 +23,9 @@ app.post("/api/explain", async (req, res) => {
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     const prompt = `
-You are a friendly and creative AI tutor.
-Your job is to:
-1. Explain the concept of "${concept}" in simple, beginner-friendly language.
-2. Create a short story or relatable analogy to help understand it better.
-
-Respond with a JSON object like:
+You are a friendly AI tutor.
+Explain the concept of "${concept}" in simple language and give a short story or analogy.
+Respond ONLY as JSON:
 {
   "explanation": "...",
   "story": "..."
@@ -41,14 +33,19 @@ Respond with a JSON object like:
 `;
 
     const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+    const text = (await result.response).text();
 
-    // Extract JSON from AI response
-    const start = text.indexOf("{");
-    const end = text.lastIndexOf("}");
-    const jsonString = text.substring(start, end + 1);
-    const parsed = JSON.parse(jsonString);
+    // Safe JSON parsing
+    let parsed;
+    try {
+      const start = text.indexOf("{");
+      const end = text.lastIndexOf("}");
+      if (start === -1 || end === -1) throw new Error("Invalid JSON from AI");
+      parsed = JSON.parse(text.substring(start, end + 1));
+    } catch (err) {
+      console.error("Failed to parse Gemini response:", text, err);
+      return res.status(500).json({ error: "Invalid AI response" });
+    }
 
     res.json({
       term: concept,
@@ -61,5 +58,5 @@ Respond with a JSON object like:
   }
 });
 
-
+// Export for Vercel serverless
 export const handler = serverless(app);
